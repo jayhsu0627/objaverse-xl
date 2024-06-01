@@ -34,7 +34,8 @@ def log_processed_object(csv_filename: str, *args) -> None:
     args = ",".join([str(arg) for arg in args])
     # log that this object was rendered successfully
     # saving locally to avoid excessive writes to the cloud
-    dirname = os.path.expanduser(f"~/.objaverse/logs/")
+    # dirname = os.path.expanduser(f"~/.objaverse/logs/")
+    dirname = os.path.expanduser(f"/fs/nexus-scratch/sjxu/.objaverse/logs/")
     os.makedirs(dirname, exist_ok=True)
     with open(os.path.join(dirname, csv_filename), "a", encoding="utf-8") as f:
         f.write(f"{time.time()},{args}\n")
