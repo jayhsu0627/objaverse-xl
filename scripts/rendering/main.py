@@ -466,6 +466,6 @@ if __name__ == "__main__":
     loop_time = end_time - start_time
     loop_time = loop_time.seconds//3600
     
-    # Write the loop time to the file
-    with open(filename, "a") as file:
-        file.write(f"Run: {loop_time:.2f} seconds\n")
+    # # Write the loop time to the file
+    # with open(filename, "a") as file:
+    #     file.write(f"Run: {loop_time:.2f} seconds\n")
