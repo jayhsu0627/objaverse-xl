@@ -76,7 +76,7 @@ class GitHubDownloader(ObjaverseSource):
 
     @classmethod
     def get_annotations(
-        cls, download_dir: str = "~/.objaverse", refresh: bool = False
+        cls, download_dir: str = "/fs/nexus-scratch/sjxu/.objaverse", refresh: bool = False
     ) -> pd.DataFrame:
         """Loads the GitHub 3D object metadata as a Pandas DataFrame.
 
@@ -101,7 +101,7 @@ class GitHubDownloader(ObjaverseSource):
 
     @classmethod
     def get_alignment_annotations(
-        cls, download_dir: str = "~/.objaverse", refresh: bool = False
+        cls, download_dir: str = "/fs/nexus-scratch/sjxu/.objaverse", refresh: bool = False
     ) -> pd.DataFrame:
         """Loads the alignment fine-tuning metadata as a Pandas DataFrame.
 
@@ -468,7 +468,7 @@ class GitHubDownloader(ObjaverseSource):
     def download_objects(
         cls,
         objects: pd.DataFrame,
-        download_dir: Optional[str] = "~/.objaverse",
+        download_dir: Optional[str] = "/fs/nexus-scratch/sjxu/.objaverse",
         processes: Optional[int] = None,
         handle_found_object: Optional[Callable] = None,
         handle_modified_object: Optional[Callable] = None,
@@ -562,7 +562,7 @@ class GitHubDownloader(ObjaverseSource):
                     f"If {save_repo_format=} is not None, {download_dir=} must be specified."
                 )
             # path doesn't matter if we're not saving the repo
-            download_dir = "~/.objaverse"
+            download_dir = "/fs/nexus-scratch/sjxu/.objaverse"
 
         base_download_dir = os.path.join(download_dir, "github")
         fs, path = fsspec.core.url_to_fs(base_download_dir)
