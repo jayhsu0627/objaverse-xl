@@ -20,6 +20,9 @@ from loguru import logger
 import objaverse.xl as oxl
 from objaverse.utils import get_uid_from_str
 
+import time
+import datetime
+
 
 def log_processed_object(csv_filename: str, *args) -> None:
     """Log when an object is done being used.
@@ -126,6 +129,7 @@ def handle_found_object(
         # check for Linux / Ubuntu or MacOS
         if platform.system() == "Linux" and using_gpu:
             args += " --engine BLENDER_EEVEE"
+            # args += " --engine CYCLES"
         elif platform.system() == "Darwin" or (
             platform.system() == "Linux" and not using_gpu
         ):
@@ -141,7 +145,8 @@ def handle_found_object(
             args += " --only_northern_hemisphere"
 
         # get the command to run
-        command = f"blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
+        # command = f"blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
+        command = f"xvfb-run -s \"-screen 0 2560x1440x24\" blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
         if using_gpu:
             command = f"export DISPLAY=:0.{gpu_i} && {command}"
 
@@ -340,7 +345,8 @@ def get_example_objects() -> pd.DataFrame:
 
 
 def render_objects(
-    render_dir: str = "~/.objaverse",
+    # render_dir: str = "~/.objaverse",
+    render_dir: str = "/fs/nexus-scratch/sjxu/.objaverse",
     download_dir: Optional[str] = None,
     num_renders: int = 12,
     processes: Optional[int] = None,
@@ -453,4 +459,13 @@ def render_objects(
 
 
 if __name__ == "__main__":
+    filename = "/fs/nexus-scratch/sjxu/objaverse-xl/scripts/rendering/loop_time_ee.txt"
+    start_time = datetime.datetime.now()
     fire.Fire(render_objects)
+    end_time = datetime.datetime.now()
+    loop_time = end_time - start_time
+    loop_time = loop_time.seconds//3600
+    
+    # Write the loop time to the file
+    with open(filename, "a") as file:
+        file.write(f"Run: {loop_time:.2f} seconds\n")

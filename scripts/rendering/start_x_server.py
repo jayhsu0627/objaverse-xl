@@ -218,7 +218,9 @@ if __name__ == "__main__":
         path = os.path.abspath(__file__)
         print("Executing ai2thor-xorg with sudo")
         args = ["--", path] + sys.argv[1:]
-        os.execvp("sudo", args)
+        # os.execvp("sudo", args)
+        print(args)
+        os.execvp("",args)
 
     if platform.system() != "Linux":
         print("Error: Can only run ai2thor-xorg on linux")
