@@ -146,7 +146,9 @@ def handle_found_object(
 
         # get the command to run
         # command = f"blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
-        command = f"xvfb-run -s \"-screen 0 2560x1440x24\" blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
+        command = f"xvfb-run -s \"-screen 0 1024x768x24 -ac +extension GLX +render -noreset\" blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
+        # https://devtalk.blender.org/t/blender-2-8-unable-to-open-a-display-by-the-rendering-on-the-background-eevee/1436/10
+        # https://yigityakupoglu.home.blog/
         if using_gpu:
             command = f"export DISPLAY=:0.{gpu_i} && {command}"
 
