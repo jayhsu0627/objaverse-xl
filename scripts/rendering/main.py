@@ -128,8 +128,8 @@ def handle_found_object(
 
         # check for Linux / Ubuntu or MacOS
         if platform.system() == "Linux" and using_gpu:
-            args += " --engine BLENDER_EEVEE"
-            # args += " --engine CYCLES"
+            # args += " --engine BLENDER_EEVEE"
+            args += " --engine CYCLES"
         elif platform.system() == "Darwin" or (
             platform.system() == "Linux" and not using_gpu
         ):
@@ -145,8 +145,8 @@ def handle_found_object(
             args += " --only_northern_hemisphere"
 
         # get the command to run
-        # command = f"blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
-        command = f"xvfb-run -s \"-screen 0 1024x768x24 -ac +extension GLX +render -noreset\" blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
+        command = f"blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
+        # command = f"xvfb-run -s \"-screen 0 1024x768x24 -ac +extension GLX +render -noreset\" blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
         # https://devtalk.blender.org/t/blender-2-8-unable-to-open-a-display-by-the-rendering-on-the-background-eevee/1436/10
         # https://yigityakupoglu.home.blog/
         if using_gpu:
@@ -466,8 +466,17 @@ if __name__ == "__main__":
     fire.Fire(render_objects)
     end_time = datetime.datetime.now()
     loop_time = end_time - start_time
-    loop_time = loop_time.seconds//3600
+    # loop_time = loop_time.seconds//3600
     
-    # # Write the loop time to the file
-    # with open(filename, "a") as file:
-    #     file.write(f"Run: {loop_time:.2f} seconds\n")
+    # Calculate hours, minutes, and seconds from loop_time
+    total_seconds = int(loop_time.total_seconds())
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+
+    # Format as "hours:minutes:seconds"
+    loop_time_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
+
+    # Write the loop time to the file
+    with open(filename, "a") as file:
+        file.write("Run: "+ loop_time_formatted +"seconds\n")
