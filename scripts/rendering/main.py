@@ -150,7 +150,7 @@ def handle_found_object(
         # https://devtalk.blender.org/t/blender-2-8-unable-to-open-a-display-by-the-rendering-on-the-background-eevee/1436/10
         # https://yigityakupoglu.home.blog/
         if using_gpu:
-            command = f"export DISPLAY=:2.{gpu_i} && {command}"
+            command = f"export DISPLAY=:3.{gpu_i} && {command}"
 
         # render the object (put in dev null)
         subprocess.run(

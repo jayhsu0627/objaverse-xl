@@ -49,6 +49,8 @@ For example, a local user on linux may have `DISPLAY=:2.0`, or once we specific 
       command = f"export DISPLAY=:9.{gpu_i} && {command}"
 ```
 
+Remember to stop it `sudo python3 start_x_server.py stop` on ssh headless machine, otherwise, otherusers cannot login its monitor display physically.
+
 After setup, we can start to render objects using the `main.py` script:
 
 ```bash
