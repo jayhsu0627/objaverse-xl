@@ -38,7 +38,7 @@ def log_processed_object(csv_filename: str, *args) -> None:
     # log that this object was rendered successfully
     # saving locally to avoid excessive writes to the cloud
     # dirname = os.path.expanduser(f"~/.objaverse/logs/")
-    dirname = os.path.expanduser(f"/fs/nexus-scratch/sjxu/.objaverse/logs/")
+    dirname = os.path.expanduser(f"/home/sjxu/Documents/objaverse-xl/.objaverse/logs/")
     os.makedirs(dirname, exist_ok=True)
     with open(os.path.join(dirname, csv_filename), "a", encoding="utf-8") as f:
         f.write(f"{time.time()},{args}\n")
@@ -128,8 +128,8 @@ def handle_found_object(
 
         # check for Linux / Ubuntu or MacOS
         if platform.system() == "Linux" and using_gpu:
-            # args += " --engine BLENDER_EEVEE"
-            args += " --engine CYCLES"
+            args += " --engine BLENDER_EEVEE"
+            # args += " --engine CYCLES"
         elif platform.system() == "Darwin" or (
             platform.system() == "Linux" and not using_gpu
         ):
@@ -150,7 +150,7 @@ def handle_found_object(
         # https://devtalk.blender.org/t/blender-2-8-unable-to-open-a-display-by-the-rendering-on-the-background-eevee/1436/10
         # https://yigityakupoglu.home.blog/
         if using_gpu:
-            command = f"export DISPLAY=:0.{gpu_i} && {command}"
+            command = f"export DISPLAY=:2.{gpu_i} && {command}"
 
         # render the object (put in dev null)
         subprocess.run(
@@ -348,7 +348,7 @@ def get_example_objects() -> pd.DataFrame:
 
 def render_objects(
     # render_dir: str = "~/.objaverse",
-    render_dir: str = "/fs/nexus-scratch/sjxu/.objaverse",
+    render_dir: str = "/home/sjxu/Documents/objaverse-xl/.objaverse",
     download_dir: Optional[str] = None,
     num_renders: int = 12,
     processes: Optional[int] = None,
@@ -461,7 +461,8 @@ def render_objects(
 
 
 if __name__ == "__main__":
-    filename = "/fs/nexus-scratch/sjxu/objaverse-xl/scripts/rendering/loop_time_ee.txt"
+    filename = "/home/sjxu/Documents/objaverse-xl/scripts/rendering/loop_time_ee.txt"
+
     start_time = datetime.datetime.now()
     fire.Fire(render_objects)
     end_time = datetime.datetime.now()

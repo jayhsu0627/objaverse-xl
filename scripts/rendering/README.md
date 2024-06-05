@@ -41,6 +41,14 @@ cd ../.. && \
 
 ### 🐥 Minimal Example
 
+Before running, make sure your X11 monitor is linked. A normal sudo user don't change anything, but we need to give the monitor id to line `153` to give the target rendering place.
+
+For example, a local user on linux may have `DISPLAY=:2.0`, or once we specific a monitor id from step 3 `python3 start_x_server.py start 9` we need to forward this id to line `153` by change it into 
+```
+  if using_gpu:
+      command = f"export DISPLAY=:9.{gpu_i} && {command}"
+```
+
 After setup, we can start to render objects using the `main.py` script:
 
 ```bash
