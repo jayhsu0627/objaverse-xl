@@ -1,0 +1,36 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 84141,
+  "file_identifier": "https://3d-api.si.edu/content/document/3d_package:4bb758be-9bf6-45b0-ba0d-a8b545ee710a/USNM396934_hamate_right_-200-150k-2048-medium.glb",
+  "file_size": 370536,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 1,
+  "mesh_count": 1,
+  "metadata": {},
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 4,
+  "poly_count": 56094,
+  "random_color": null,
+  "save_uid": "d09f3083-6315-52e6-8d0d-a72ce47ffdbe",
+  "scene_size": {
+    "bbox_max": [
+      1.9720306396484375,
+      701.6505737304688,
+      -165.80677795410156
+    ],
+    "bbox_min": [
+      -26.299299240112305,
+      671.648681640625,
+      -184.65249633789062
+    ]
+  },
+  "sha256": "28c9022e88c0b06992ef2d1e51a8a747cad8a1d3283c6a51197b4d5714b40337",
+  "shape_key_count": 0,
+  "vert_count": 28047
+}

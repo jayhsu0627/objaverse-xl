@@ -1,0 +1,36 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 225000,
+  "file_identifier": "https://3d-api.si.edu/content/document/3d_package:306c5849-feab-425a-86dc-ec1aed717d65/USNM016308_cranium_mandible_-600-150k-2048-medium.glb",
+  "file_size": 2040648,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 1,
+  "mesh_count": 1,
+  "metadata": {},
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 4,
+  "poly_count": 149981,
+  "random_color": null,
+  "save_uid": "71999e2d-8bc8-5368-beae-e00c56851491",
+  "scene_size": {
+    "bbox_max": [
+      28.06894874572754,
+      332.7914123535156,
+      -159.335693359375
+    ],
+    "bbox_min": [
+      -29.87721061706543,
+      184.24940490722656,
+      -200.86180114746094
+    ]
+  },
+  "sha256": "3cd092c85c991035b692f15bc6e7f9657ef940c15cf81b872912f5bb2843c3e2",
+  "shape_key_count": 0,
+  "vert_count": 73774
+}

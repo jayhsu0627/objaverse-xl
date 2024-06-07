@@ -1,0 +1,36 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 225000,
+  "file_identifier": "https://3d-api.si.edu/content/document/3d_package:c6c22bce-01b2-404a-886b-cb53d4054003/USNM142170_Mandible_-300-150k-2048-medium.glb",
+  "file_size": 3050920,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 1,
+  "mesh_count": 1,
+  "metadata": {},
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 4,
+  "poly_count": 150000,
+  "random_color": null,
+  "save_uid": "bd206a57-7797-5cf4-b8eb-e0f2f0bf8cd9",
+  "scene_size": {
+    "bbox_max": [
+      135.6125030517578,
+      541.3961791992188,
+      116.94646453857422
+    ],
+    "bbox_min": [
+      16.646780014038086,
+      399.49481201171875,
+      27.282609939575195
+    ]
+  },
+  "sha256": "ce8fd565453d74938a7e1402054101b6bc217bf6846c80eb2b3e503ca57ea5b5",
+  "shape_key_count": 0,
+  "vert_count": 66898
+}

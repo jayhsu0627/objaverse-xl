@@ -1,0 +1,44 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 22416,
+  "file_identifier": "https://github.com/sadekbaroudi/fingerpunch/blob/1e42f7ea6756286fa8b4c79773f2ba50249c7952/keyboards/stenographobe/cases/stenographobe-body-mx.stl",
+  "file_size": 747284,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 0,
+  "mesh_count": 1,
+  "metadata": {
+    "github_organization": "sadekbaroudi",
+    "github_repo": "fingerpunch"
+  },
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 4,
+  "poly_count": 14944,
+  "random_color": [
+    0.26498817601857505,
+    0.18516654576504765,
+    0.7036955042674549,
+    1
+  ],
+  "save_uid": "472286d3-ad02-595d-a826-e57018283136",
+  "scene_size": {
+    "bbox_max": [
+      290.6368408203125,
+      2.3997673988342285,
+      2.0
+    ],
+    "bbox_min": [
+      -2.398700714111328,
+      -96.54927825927734,
+      -8.600000381469727
+    ]
+  },
+  "sha256": "cb9d36736e82d00a2ec6bef2a5ef15ec2e48f6e6c4c3363994e974af50840b17",
+  "shape_key_count": 0,
+  "vert_count": 7398
+}

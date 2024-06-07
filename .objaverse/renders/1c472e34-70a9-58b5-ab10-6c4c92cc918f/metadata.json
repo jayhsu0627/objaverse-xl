@@ -1,0 +1,41 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 7005,
+  "file_identifier": "https://thingiverse.com/thing:4913363/files?fileId=9750748",
+  "file_size": 233584,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 0,
+  "mesh_count": 1,
+  "metadata": {},
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 4,
+  "poly_count": 4670,
+  "random_color": [
+    0.2992699110322685,
+    0.8447978698887071,
+    0.13591780918708196,
+    1
+  ],
+  "save_uid": "1c472e34-70a9-58b5-ab10-6c4c92cc918f",
+  "scene_size": {
+    "bbox_max": [
+      107.13602447509766,
+      63.5,
+      106.73872375488281
+    ],
+    "bbox_min": [
+      0.45602768659591675,
+      0.0,
+      0.05872547626495361
+    ]
+  },
+  "sha256": "37caffbb3cebd13795c7fd5b0e929f0fe557d2f0d5059ead86d10a1bcd2325db",
+  "shape_key_count": 0,
+  "vert_count": 2337
+}

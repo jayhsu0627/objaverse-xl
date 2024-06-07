@@ -1,0 +1,36 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 225000,
+  "file_identifier": "https://3d-api.si.edu/content/document/3d_package:671c37e7-3357-4e64-bb8b-c38c5a02071c/USNM396933_cranium_-500_dec-150k-2048-medium.glb",
+  "file_size": 1915980,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 1,
+  "mesh_count": 1,
+  "metadata": {},
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 4,
+  "poly_count": 150000,
+  "random_color": null,
+  "save_uid": "e69eca18-9aae-5f63-90ac-3b845161d171",
+  "scene_size": {
+    "bbox_max": [
+      37.86106491088867,
+      490.1559143066406,
+      -160.22434997558594
+    ],
+    "bbox_min": [
+      -34.55936813354492,
+      380.9252014160156,
+      -222.5637969970703
+    ]
+  },
+  "sha256": "6ea033808ad3c7c9c1c3166b934e3b2f4e43dfe76f0b04fff3083f15abec15c3",
+  "shape_key_count": 0,
+  "vert_count": 72972
+}

@@ -1,0 +1,50 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 2688,
+  "file_identifier": "https://github.com/EZHoon93/Hide-SeekIo/blob/4cb725f630a0dbac339b21d3663e497094bcb1c4/HideSeekIo/Assets/999.3D Assets/z.Bitgem/Nature Set - Proto Series/Models/birch_tree_col3_02_snow.fbx",
+  "file_size": 95840,
+  "lamp_count": 1,
+  "linked_files": [
+    "/tmp/tmpcqmu9aw6/Hide-SeekIo/HideSeekIo/Assets/999.3D Assets/z.Bitgem/Nature Set - Proto Series/Models/../construction/birch_tree_texture.psd"
+  ],
+  "material_count": 1,
+  "mesh_count": 1,
+  "metadata": {
+    "github_organization": "EZHoon93",
+    "github_repo": "Hide-SeekIo"
+  },
+  "missing_textures": {
+    "count": 1,
+    "file_path_to_color": {
+      "/tmp/tmpcqmu9aw6/Hide-SeekIo/HideSeekIo/Assets/999.3D Assets/z.Bitgem/Nature Set - Proto Series/Models/../construction/birch_tree_texture.psd": [
+        0.1820681197719587,
+        0.2512736992180781,
+        0.7590293817641106,
+        1
+      ]
+    },
+    "files": [
+      "/tmp/tmpcqmu9aw6/Hide-SeekIo/HideSeekIo/Assets/999.3D Assets/z.Bitgem/Nature Set - Proto Series/Models/../construction/birch_tree_texture.psd"
+    ]
+  },
+  "object_count": 4,
+  "poly_count": 1372,
+  "random_color": null,
+  "save_uid": "74d5c84e-16b3-54c1-9ff1-d446286f0f29",
+  "scene_size": {
+    "bbox_max": [
+      3.386885404586792,
+      2.736420154571533,
+      11.432490348815918
+    ],
+    "bbox_min": [
+      -2.8960561752319336,
+      -2.820547580718994,
+      -0.7500001192092896
+    ]
+  },
+  "sha256": "f02d24a5653c83194c3f23f5f242f3f678c6f1b05fcd3830a5d90513716c6b7c",
+  "shape_key_count": 0,
+  "vert_count": 1344
+}

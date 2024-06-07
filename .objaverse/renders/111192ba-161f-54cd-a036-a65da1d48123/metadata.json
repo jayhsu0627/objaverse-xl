@@ -1,0 +1,36 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 12063,
+  "file_identifier": "https://sketchfab.com/3d-models/8e1c08c45b954349b20fe9cdc0b55713",
+  "file_size": 259420,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 4,
+  "mesh_count": 4,
+  "metadata": {},
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 11,
+  "poly_count": 7062,
+  "random_color": null,
+  "save_uid": "111192ba-161f-54cd-a036-a65da1d48123",
+  "scene_size": {
+    "bbox_max": [
+      0.36122679710388184,
+      0.2494540959596634,
+      0.01697094924747944
+    ],
+    "bbox_min": [
+      0.29110878705978394,
+      0.2152460813522339,
+      0.0011248327791690826
+    ]
+  },
+  "sha256": "24b6ee738ff4ba48044ca1bd5456fb4e2ff072797c2b2e8e74df4c1f2e957299",
+  "shape_key_count": 0,
+  "vert_count": 5145
+}

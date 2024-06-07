@@ -1,0 +1,44 @@
+{
+  "animation_count": 0,
+  "armature_count": 0,
+  "edge_count": 0,
+  "file_identifier": "https://github.com/0010cha/data_origami/blob/086213096e006a05aea67149874ecc00733a2b7b/airplane/sphere_sv/points_sv_30_90/airplane1440_sv_output_299.ply",
+  "file_size": 89870,
+  "lamp_count": 1,
+  "linked_files": [],
+  "material_count": 0,
+  "mesh_count": 1,
+  "metadata": {
+    "github_organization": "0010cha",
+    "github_repo": "data_origami"
+  },
+  "missing_textures": {
+    "count": 0,
+    "file_path_to_color": {},
+    "files": []
+  },
+  "object_count": 4,
+  "poly_count": 0,
+  "random_color": [
+    0.9487531910857767,
+    0.6107776388236345,
+    0.8266166529693404,
+    1
+  ],
+  "save_uid": "0e4273c0-0ecb-5865-a9ba-b92b8ae79f70",
+  "scene_size": {
+    "bbox_max": [
+      0.7978526949882507,
+      0.7995370030403137,
+      0.2742791175842285
+    ],
+    "bbox_min": [
+      -0.7998663783073425,
+      -0.7995961904525757,
+      -9.799999816095806e-07
+    ]
+  },
+  "sha256": "2df906e93996a09917bfdc4f221b5fa358a9d51e13dd258391f729f779f99f99",
+  "shape_key_count": 0,
+  "vert_count": 2570
+}
