@@ -1,0 +1,14 @@
+ID	words	gloss	light_type	rotation	color	num_train_images
+0	point, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color point light	POINT	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+1	sun, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color sun light	SUN	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+2	spot, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color spot light	SPOT	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+0	point, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color point light	POINT	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+1	sun, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color sun light	SUN	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+0	point, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color point light	POINT	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+1	sun, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color sun light	SUN	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+0	point, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color point light	POINT	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+1	sun, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color sun light	SUN	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+0	point, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color point light	POINT	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+1	sun, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color sun light	SUN	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+0	point, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color point light	POINT	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
+1	sun, rotation at (3.567, 2.8378, 4.6846), color is (0.15, 1.0, 1.0, 1.0)	A aqua color sun light	SUN	(3.567, 2.8378, 4.6846)	(0.15, 1.0, 1.0, 1.0)	1
