@@ -214,13 +214,14 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
     bpy.ops.object.select_by_type(type="LIGHT")
     bpy.ops.object.delete()
 
+    # Point light
     # Create key light
     key_light = _create_light(
         name="Key_Light",
         light_type="SUN",
         location=(0, 0, 0),
-        rotation=(0.785398, 0, -0.785398),
-        energy=random.choice([3, 4, 5]),
+        rotation=(0.785398, 0, -0.785398), # 45 degrees -45 degrees
+        energy=random.choice([3, 4, 5]), # random choice from 3, 4, and 5
     )
 
     # Create fill light
@@ -228,8 +229,8 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         name="Fill_Light",
         light_type="SUN",
         location=(0, 0, 0),
-        rotation=(0.785398, 0, 2.35619),
-        energy=random.choice([2, 3, 4]),
+        rotation=(0.785398, 0, 2.35619), # 45 degrees  135 degrees
+        energy=random.choice([2, 3, 4]), # random choice from 2, 3, and 4
     )
 
     # Create rim light
@@ -237,8 +238,8 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         name="Rim_Light",
         light_type="SUN",
         location=(0, 0, 0),
-        rotation=(-0.785398, 0, -3.92699),
-        energy=random.choice([3, 4, 5]),
+        rotation=(-0.785398, 0, -3.92699),# -45 degrees  -225 degrees
+        energy=random.choice([3, 4, 5]), # random choice from 3, 4, and 5
     )
 
     # Create bottom light
@@ -246,8 +247,8 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         name="Bottom_Light",
         light_type="SUN",
         location=(0, 0, 0),
-        rotation=(3.14159, 0, 0),
-        energy=random.choice([1, 2, 3]),
+        rotation=(3.14159, 0, 0), # 180 degrees  0 degrees
+        energy=random.choice([1, 2, 3]), # random choice from 1, 2, and 3
     )
 
     return dict(

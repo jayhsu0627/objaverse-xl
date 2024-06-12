@@ -89,9 +89,9 @@ def rename_line(input_filename, output_filename):
                 # writer.writerow(["ID", line_key])
 
 # Example usage
-input_filename = '/fs/nexus-scratch/sjxu/objaverse-xl/scripts/rendering/meta.txt'  # Replace with your text file name
+input_filename = '/home/sjxu/Documents/objaverse-xl/scripts/rendering/meta.txt'  # Replace with your text file name
 temp_filename = './temp.txt'
-output_filename = './example_unique.txt'  # Replace with the desired output file name
+output_filename = './meta_unique.txt'  # Replace with the desired output file name
 remove_repeated_lines(input_filename, temp_filename)
 rename_line(temp_filename, output_filename)
 os.remove(temp_filename)

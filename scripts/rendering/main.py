@@ -150,7 +150,7 @@ def handle_found_object(
         # https://devtalk.blender.org/t/blender-2-8-unable-to-open-a-display-by-the-rendering-on-the-background-eevee/1436/10
         # https://yigityakupoglu.home.blog/
         if using_gpu:
-            command = f"export DISPLAY=:3.{gpu_i} && {command}"
+            command = f"export DISPLAY=:9.{gpu_i} && {command}"
 
         # render the object (put in dev null)
         subprocess.run(
@@ -408,8 +408,21 @@ def render_objects(
     if processes is None:
         processes = multiprocessing.cpu_count() * 3
 
-    # get the objects to render
-    objects = get_example_objects()
+    # # get the objects to render
+    # objects = get_example_objects()
+
+    # sample a single object from each source
+    annotations = oxl.get_annotations(
+    download_dir= "/home/sjxu/Documents/objaverse-xl/.objaverse"
+    )
+    sampled_df = annotations.groupby('source').apply(lambda x: x.sample(1)).reset_index(drop=True)
+    # oxl.download_objects(objects=sampled_df)
+    # oxl.download_objects(
+    #     objects=sampled_df,
+    #     handle_found_object=handle_found_object
+    # )
+    objects = sampled_df
+
     objects.iloc[0]["fileIdentifier"]
     objects = objects.copy()
     logger.info(f"Provided {len(objects)} objects to render.")
@@ -481,3 +494,4 @@ if __name__ == "__main__":
     # Write the loop time to the file
     with open(filename, "a") as file:
         file.write("Run: "+ loop_time_formatted +"seconds\n")
+    subprocess.run(["bash", "-c", "sudo python3 start_x_server.py stop"])

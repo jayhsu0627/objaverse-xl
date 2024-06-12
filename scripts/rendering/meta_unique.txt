@@ -1,0 +1,17 @@
+ID	words	gloss	light_type	rotation	color	num_train_images
+1	point, rotation at (5.9238, -1.4163, 0.5632), color is (0.91, 0.9, 1.0, 1.0)	A lavender color point light	POINT	(5.9238, -1.4163, 0.5632)	(0.91, 0.9, 1.0, 1.0)	1
+2	sun, rotation at (5.9238, -1.4163, 0.5632), color is (0.91, 0.9, 1.0, 1.0)	A lavender color sun light	SUN	(5.9238, -1.4163, 0.5632)	(0.91, 0.9, 1.0, 1.0)	1
+3	spot, rotation at (5.9238, -1.4163, 0.5632), color is (0.91, 0.9, 1.0, 1.0)	A lavender color spot light	SPOT	(5.9238, -1.4163, 0.5632)	(0.91, 0.9, 1.0, 1.0)	1
+4	area, rotation at (5.9238, -1.4163, 0.5632), color is (0.91, 0.9, 1.0, 1.0)	A lavender color area light	AREA	(5.9238, -1.4163, 0.5632)	(0.91, 0.9, 1.0, 1.0)	1
+5	point, rotation at (5.9238, -1.4163, 0.5632), color is (0.84, 1.0, 1.0, 1.0)	A lightcyan color point light	POINT	(5.9238, -1.4163, 0.5632)	(0.84, 1.0, 1.0, 1.0)	1
+6	sun, rotation at (5.9238, -1.4163, 0.5632), color is (0.84, 1.0, 1.0, 1.0)	A lightcyan color sun light	SUN	(5.9238, -1.4163, 0.5632)	(0.84, 1.0, 1.0, 1.0)	1
+7	spot, rotation at (5.9238, -1.4163, 0.5632), color is (0.84, 1.0, 1.0, 1.0)	A lightcyan color spot light	SPOT	(5.9238, -1.4163, 0.5632)	(0.84, 1.0, 1.0, 1.0)	1
+8	area, rotation at (5.9238, -1.4163, 0.5632), color is (0.84, 1.0, 1.0, 1.0)	A lightcyan color area light	AREA	(5.9238, -1.4163, 0.5632)	(0.84, 1.0, 1.0, 1.0)	1
+9	point, rotation at (3.4497, -1.8042, -2.5884), color is (1.0, 0.83, 1.0, 1.0)	A lavenderblush color point light	POINT	(3.4497, -1.8042, -2.5884)	(1.0, 0.83, 1.0, 1.0)	1
+10	sun, rotation at (3.4497, -1.8042, -2.5884), color is (1.0, 0.83, 1.0, 1.0)	A lavenderblush color sun light	SUN	(3.4497, -1.8042, -2.5884)	(1.0, 0.83, 1.0, 1.0)	1
+11	spot, rotation at (3.4497, -1.8042, -2.5884), color is (1.0, 0.83, 1.0, 1.0)	A lavenderblush color spot light	SPOT	(3.4497, -1.8042, -2.5884)	(1.0, 0.83, 1.0, 1.0)	1
+12	area, rotation at (3.4497, -1.8042, -2.5884), color is (1.0, 0.83, 1.0, 1.0)	A lavenderblush color area light	AREA	(3.4497, -1.8042, -2.5884)	(1.0, 0.83, 1.0, 1.0)	1
+13	point, rotation at (3.4497, -1.8042, -2.5884), color is (0.49, 1.0, 0.86, 1.0)	A aquamarine color point light	POINT	(3.4497, -1.8042, -2.5884)	(0.49, 1.0, 0.86, 1.0)	1
+14	sun, rotation at (3.4497, -1.8042, -2.5884), color is (0.49, 1.0, 0.86, 1.0)	A aquamarine color sun light	SUN	(3.4497, -1.8042, -2.5884)	(0.49, 1.0, 0.86, 1.0)	1
+15	spot, rotation at (3.4497, -1.8042, -2.5884), color is (0.49, 1.0, 0.86, 1.0)	A aquamarine color spot light	SPOT	(3.4497, -1.8042, -2.5884)	(0.49, 1.0, 0.86, 1.0)	1
+16	area, rotation at (3.4497, -1.8042, -2.5884), color is (0.49, 1.0, 0.86, 1.0)	A aquamarine color area light	AREA	(3.4497, -1.8042, -2.5884)	(0.49, 1.0, 0.86, 1.0)	1
