@@ -84,8 +84,8 @@ data = [
 data = []
 light_type = ["POINT", "SUN", "SPOT", "AREA"]
 
-rotation_n = 16
-color_n = 16
+rotation_n = 2
+color_n = 2
 num = 0
 for i in range(rotation_n):
     rotation_array = (

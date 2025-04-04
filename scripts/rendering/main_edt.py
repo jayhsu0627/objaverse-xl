@@ -146,13 +146,18 @@ def handle_found_object(
 
         # get the command to run
         # command = f"blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
-        command = f"blender-3.2.2-linux-x64/blender --background --python blender_script_cp.py -- {args}"
+        # command = f"blender-3.2.2-linux-x64/blender --background --python blender_script_cp.py {args}"
+        command = f"blender-3.2.2-linux-x64/blender -b --python blender_script_cp.py -- {args}"
+
         # command = f"xvfb-run -s \"-screen 0 1024x768x24 -ac +extension GLX +render -noreset\" blender-3.2.2-linux-x64/blender --background --python blender_script.py -- {args}"
+        # command = f"xvfb-run -s \"-screen 0 1024x768x24\" blender-3.2.2-linux-x64/blender --background --python blender_script_cp.py -- {args}"
+
         # https://devtalk.blender.org/t/blender-2-8-unable-to-open-a-display-by-the-rendering-on-the-background-eevee/1436/10
         # https://yigityakupoglu.home.blog/
+        
         if using_gpu:
             command = f"export DISPLAY=:0.{gpu_i} && {command}"
-
+        
         # render the object (put in dev null)
         subprocess.run(
             ["bash", "-c", command],
@@ -161,6 +166,20 @@ def handle_found_object(
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+
+        # result = subprocess.run(
+        #     ["bash", "-c", command],
+        #     timeout=render_timeout,
+        #     capture_output=True,
+        #     text=True
+        # )
+
+        # # Save GPU usage info from stdout
+        # logger.info(f"[{file_identifier}] Blender stdout:\n{result.stdout}")
+
+        # if result.returncode != 0:
+        #     logger.error(f"[{file_identifier}] Blender render failed:\n{result.stderr}")
+
 
         # check that the renders were saved successfully
         png_files = glob.glob(os.path.join(target_directory, "*.png"))
@@ -351,7 +370,7 @@ def render_objects(
     # render_dir: str = "~/.objaverse",
     render_dir: str = "/fs/nexus-scratch/sjxu/.objaverse",
     download_dir: Optional[str] = None,
-    num_renders: int = 12,
+    num_renders: int = 1,
     processes: Optional[int] = None,
     save_repo_format: Optional[Literal["zip", "tar", "tar.gz", "files"]] = None,
     only_northern_hemisphere: bool = False,
@@ -481,4 +500,4 @@ if __name__ == "__main__":
     # Write the loop time to the file
     with open(filename, "a") as file:
         file.write("Run: "+ loop_time_formatted +"seconds\n")
-    subprocess.run(["bash", "-c", "sudo python3 start_x_server.py stop"])
+    # subprocess.run(["bash", "-c", "sudo python3 start_x_server.py stop"])

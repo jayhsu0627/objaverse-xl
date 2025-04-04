@@ -12,6 +12,57 @@ import bpy
 import numpy as np
 from mathutils import Matrix, Vector
 
+import csv
+import pandas as pd
+import ast
+
+# Set Cycles render engine
+bpy.context.scene.render.engine = 'CYCLES'
+
+# Get Cycles preferences
+prefs = bpy.context.preferences.addons['cycles'].preferences
+prefs.get_devices()  # Necessary to populate the device list
+
+# Log the device info to stdout
+print("=== Blender Cycles Devices ===")
+print(f"Compute device type: {prefs.compute_device_type}")
+for device in prefs.devices:
+    print(f"- {device.name} ({device.type}) | Use: {device.use}")
+print("=== End Devices ===")
+
+# Optional: force GPU usage if available
+prefs.compute_device_type = 'CUDA'  # or 'OPTIX' if supported
+for device in prefs.devices:
+    if device.type in ['CUDA', 'OPTIX']:
+        device.use = True
+bpy.context.scene.cycles.device = 'GPU'
+
+def enable_gpus(device_type, use_cpus=False):
+    preferences = bpy.context.preferences
+    cycles_preferences = preferences.addons["cycles"].preferences
+    cycles_preferences.refresh_devices()
+    devices = cycles_preferences.devices
+
+    if not devices:
+        raise RuntimeError("Unsupported device type")
+
+    activated_gpus = []
+    for device in devices:
+        if device.type == "CPU":
+            device.use = use_cpus
+        else:
+            device.use = True
+            activated_gpus.append(device.name)
+            print('activated gpu', device.name)
+
+    cycles_preferences.compute_device_type = device_type
+    bpy.context.scene.cycles.device = "GPU"
+
+    return activated_gpus
+
+
+enable_gpus("CUDA")
+
 IMPORT_FUNCTIONS: Dict[str, Callable] = {
     "obj": bpy.ops.import_scene.obj,
     "glb": bpy.ops.import_scene.gltf,
@@ -170,6 +221,7 @@ def _create_light(
     name: str,
     light_type: Literal["POINT", "SUN", "SPOT", "AREA"],
     location: Tuple[float, float, float],
+    color: Tuple[float, float, float],
     rotation: Tuple[float, float, float],
     energy: float,
     use_shadow: bool = False,
@@ -194,7 +246,7 @@ def _create_light(
     light_object = bpy.data.objects.new(name, light_data)
     bpy.context.collection.objects.link(light_object)
     light_object.location = location
-    # light_object.color = (1.0, 1.0, 1.0, 1.0)
+    light_object.color = color
     light_object.rotation_euler = rotation
     light_data.use_shadow = use_shadow
     light_data.specular_factor = specular_factor
@@ -220,6 +272,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         name="Key_Light",
         light_type="SUN",
         location=(0, 0, 0),
+        color = (1, 1, 1, 1),
         rotation=(0.785398, 0, -0.785398),
         energy=random.choice([3, 4, 5]),
     )
@@ -229,6 +282,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         name="Fill_Light",
         light_type="SUN",
         location=(0, 0, 0),
+        color = (1, 1, 1, 1),
         rotation=(0.785398, 0, 2.35619),
         energy=random.choice([2, 3, 4]),
     )
@@ -238,6 +292,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         name="Rim_Light",
         light_type="SUN",
         location=(0, 0, 0),
+        color = (1, 1, 1, 1),
         rotation=(-0.785398, 0, -3.92699),
         energy=random.choice([3, 4, 5]),
     )
@@ -247,7 +302,68 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         name="Bottom_Light",
         light_type="SUN",
         location=(0, 0, 0),
+        color = (1, 1, 1, 1),
         rotation=(3.14159, 0, 0),
+        energy=random.choice([1, 2, 3]),
+    )
+
+    return dict(
+        key_light=key_light,
+        fill_light=fill_light,
+        rim_light=rim_light,
+        bottom_light=bottom_light,
+    )
+
+def randomize_lighting_pd(light_type, color, rotation) -> Dict[str, bpy.types.Object]:
+    """Randomizes the lighting in the scene.
+
+    Returns:
+        Dict[str, bpy.types.Object]: Dictionary of the lights in the scene. The keys are
+            "key_light", "fill_light", "rim_light", and "bottom_light".
+    """
+
+    # Clear existing lights
+    bpy.ops.object.select_all(action="DESELECT")
+    bpy.ops.object.select_by_type(type="LIGHT")
+    bpy.ops.object.delete()
+
+    # Create key light
+    key_light = _create_light(
+        name="Key_Light",
+        light_type= light_type,
+        location=(0, 0, 0),
+        color = color,
+        rotation= rotation,
+        energy=random.choice([3, 4, 5]),
+    )
+
+    # Create fill light
+    fill_light = _create_light(
+        name="Fill_Light",
+        light_type= light_type,
+        location=(0, 0, 0),
+        color = color,
+        rotation=rotation,
+        energy=random.choice([2, 3, 4]),
+    )
+
+    # Create rim light
+    rim_light = _create_light(
+        name="Rim_Light",
+        light_type="SUN",
+        location=(0, 0, 0),
+        color = color,
+        rotation= rotation,
+        energy=random.choice([3, 4, 5]),
+    )
+
+    # Create bottom light
+    bottom_light = _create_light(
+        name="Bottom_Light",
+        light_type= light_type,
+        location=(0, 0, 0),
+        color = color,
+        rotation= rotation,
         energy=random.choice([1, 2, 3]),
     )
 
@@ -730,7 +846,6 @@ class MetadataExtractor:
             "armature_count": self.get_armature_count(),
         }
 
-
 def render_object(
     object_file: str,
     num_renders: int,
@@ -808,25 +923,40 @@ def render_object(
     # normalize the scene
     normalize_scene()
 
-    # randomize the lighting
-    randomize_lighting()
+    # # randomize the lighting
+    # randomize_lighting()
+
+    # File path
+    filename = '/fs/nexus-scratch/sjxu/objaverse-xl/scripts/rendering/meta_unique.txt'  # Replace with your text file name
+
+    # Read the file into a pandas DataFrame
+    df = pd.read_csv(filename, sep='\t')
+
+
 
     # render the images
     for i in range(num_renders):
-        # set camera
-        camera = randomize_camera(
-            only_northern_hemisphere=only_northern_hemisphere,
-        )
+        for index, row in df.iterrows():
+            light_type = row['light_type']
+            color = ast.literal_eval(row['color'])
+            rotation = ast.literal_eval(row['rotation'])
+            # randomize the lighting
+            randomize_lighting_pd(light_type, color, rotation)
 
-        # render the image
-        render_path = os.path.join(output_dir, f"{i:03d}.png")
-        scene.render.filepath = render_path
-        bpy.ops.render.render(write_still=True)
+            # set camera
+            camera = randomize_camera(
+                only_northern_hemisphere=only_northern_hemisphere,
+            )
 
-        # save camera RT matrix
-        rt_matrix = get_3x4_RT_matrix_from_blender(camera)
-        rt_matrix_path = os.path.join(output_dir, f"{i:03d}.npy")
-        np.save(rt_matrix_path, rt_matrix)
+            # render the image
+            render_path = os.path.join(output_dir, f"{i:03d}.png")
+            scene.render.filepath = render_path
+            bpy.ops.render.render(write_still=True)
+
+            # save camera RT matrix
+            rt_matrix = get_3x4_RT_matrix_from_blender(camera)
+            rt_matrix_path = os.path.join(output_dir, f"{i:03d}.npy")
+            np.save(rt_matrix_path, rt_matrix)
 
 
 if __name__ == "__main__":

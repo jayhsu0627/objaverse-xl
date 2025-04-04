@@ -1,0 +1,17 @@
+ID	words	gloss	light_type	rotation	color	num_train_images
+1	point, rotation at (5.6242, 4.5362, -3.198), color is (0.82, 1.0, 1.0, 1.0)	A lightcyan color point light	POINT	(5.6242, 4.5362, -3.198)	(0.82, 1.0, 1.0, 1.0)	1
+2	sun, rotation at (5.6242, 4.5362, -3.198), color is (0.82, 1.0, 1.0, 1.0)	A lightcyan color sun light	SUN	(5.6242, 4.5362, -3.198)	(0.82, 1.0, 1.0, 1.0)	1
+3	spot, rotation at (5.6242, 4.5362, -3.198), color is (0.82, 1.0, 1.0, 1.0)	A lightcyan color spot light	SPOT	(5.6242, 4.5362, -3.198)	(0.82, 1.0, 1.0, 1.0)	1
+4	area, rotation at (5.6242, 4.5362, -3.198), color is (0.82, 1.0, 1.0, 1.0)	A lightcyan color area light	AREA	(5.6242, 4.5362, -3.198)	(0.82, 1.0, 1.0, 1.0)	1
+5	point, rotation at (5.6242, 4.5362, -3.198), color is (1.0, 0.48, 0.95, 1.0)	A violet color point light	POINT	(5.6242, 4.5362, -3.198)	(1.0, 0.48, 0.95, 1.0)	1
+6	sun, rotation at (5.6242, 4.5362, -3.198), color is (1.0, 0.48, 0.95, 1.0)	A violet color sun light	SUN	(5.6242, 4.5362, -3.198)	(1.0, 0.48, 0.95, 1.0)	1
+7	spot, rotation at (5.6242, 4.5362, -3.198), color is (1.0, 0.48, 0.95, 1.0)	A violet color spot light	SPOT	(5.6242, 4.5362, -3.198)	(1.0, 0.48, 0.95, 1.0)	1
+8	area, rotation at (5.6242, 4.5362, -3.198), color is (1.0, 0.48, 0.95, 1.0)	A violet color area light	AREA	(5.6242, 4.5362, -3.198)	(1.0, 0.48, 0.95, 1.0)	1
+9	point, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 0.42, 1.0, 1.0)	A violet color point light	POINT	(-2.0193, 2.7934, 3.3768)	(1.0, 0.42, 1.0, 1.0)	1
+10	sun, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 0.42, 1.0, 1.0)	A violet color sun light	SUN	(-2.0193, 2.7934, 3.3768)	(1.0, 0.42, 1.0, 1.0)	1
+11	spot, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 0.42, 1.0, 1.0)	A violet color spot light	SPOT	(-2.0193, 2.7934, 3.3768)	(1.0, 0.42, 1.0, 1.0)	1
+12	area, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 0.42, 1.0, 1.0)	A violet color area light	AREA	(-2.0193, 2.7934, 3.3768)	(1.0, 0.42, 1.0, 1.0)	1
+13	point, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 1.0, 1.0, 1.0)	A white color point light	POINT	(-2.0193, 2.7934, 3.3768)	(1.0, 1.0, 1.0, 1.0)	1
+14	sun, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 1.0, 1.0, 1.0)	A white color sun light	SUN	(-2.0193, 2.7934, 3.3768)	(1.0, 1.0, 1.0, 1.0)	1
+15	spot, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 1.0, 1.0, 1.0)	A white color spot light	SPOT	(-2.0193, 2.7934, 3.3768)	(1.0, 1.0, 1.0, 1.0)	1
+16	area, rotation at (-2.0193, 2.7934, 3.3768), color is (1.0, 1.0, 1.0, 1.0)	A white color area light	AREA	(-2.0193, 2.7934, 3.3768)	(1.0, 1.0, 1.0, 1.0)	1
