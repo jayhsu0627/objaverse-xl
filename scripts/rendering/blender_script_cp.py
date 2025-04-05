@@ -15,6 +15,9 @@ from mathutils import Matrix, Vector
 import csv
 import pandas as pd
 import ast
+import colorsys
+import bmesh
+import shutil
 
 # Set Cycles render engine
 bpy.context.scene.render.engine = 'CYCLES'
@@ -271,7 +274,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
     key_light = _create_light(
         name="Key_Light",
         light_type="SUN",
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = (1, 1, 1, 1),
         rotation=(0.785398, 0, -0.785398),
         energy=random.choice([3, 4, 5]),
@@ -281,7 +284,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
     fill_light = _create_light(
         name="Fill_Light",
         light_type="SUN",
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = (1, 1, 1, 1),
         rotation=(0.785398, 0, 2.35619),
         energy=random.choice([2, 3, 4]),
@@ -291,7 +294,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
     rim_light = _create_light(
         name="Rim_Light",
         light_type="SUN",
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = (1, 1, 1, 1),
         rotation=(-0.785398, 0, -3.92699),
         energy=random.choice([3, 4, 5]),
@@ -301,7 +304,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
     bottom_light = _create_light(
         name="Bottom_Light",
         light_type="SUN",
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = (1, 1, 1, 1),
         rotation=(3.14159, 0, 0),
         energy=random.choice([1, 2, 3]),
@@ -313,6 +316,7 @@ def randomize_lighting() -> Dict[str, bpy.types.Object]:
         rim_light=rim_light,
         bottom_light=bottom_light,
     )
+
 
 def randomize_lighting_pd(light_type, color, rotation) -> Dict[str, bpy.types.Object]:
     """Randomizes the lighting in the scene.
@@ -331,7 +335,7 @@ def randomize_lighting_pd(light_type, color, rotation) -> Dict[str, bpy.types.Ob
     key_light = _create_light(
         name="Key_Light",
         light_type= light_type,
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = color,
         rotation= rotation,
         energy=random.choice([3, 4, 5]),
@@ -341,7 +345,7 @@ def randomize_lighting_pd(light_type, color, rotation) -> Dict[str, bpy.types.Ob
     fill_light = _create_light(
         name="Fill_Light",
         light_type= light_type,
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = color,
         rotation=rotation,
         energy=random.choice([2, 3, 4]),
@@ -351,7 +355,7 @@ def randomize_lighting_pd(light_type, color, rotation) -> Dict[str, bpy.types.Ob
     rim_light = _create_light(
         name="Rim_Light",
         light_type="SUN",
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = color,
         rotation= rotation,
         energy=random.choice([3, 4, 5]),
@@ -361,7 +365,7 @@ def randomize_lighting_pd(light_type, color, rotation) -> Dict[str, bpy.types.Ob
     bottom_light = _create_light(
         name="Bottom_Light",
         light_type= light_type,
-        location=(0, 0, 0),
+        location=(0, 0, 1),
         color = color,
         rotation= rotation,
         energy=random.choice([1, 2, 3]),
@@ -439,6 +443,89 @@ def load_object(object_path: str) -> None:
     else:
         import_function(filepath=object_path)
 
+
+def load_object(object_path: str) -> None:
+    """Loads a model with a supported file extension into the scene and joins all parts into a single object.
+    
+    Args:
+        object_path (str): Path to the model file.
+        
+    Raises:
+        ValueError: If the file extension is not supported.
+        
+    Returns:
+        None
+    """
+    # Store initial object count to identify newly imported objects
+    initial_objects = set(bpy.data.objects)
+    
+    file_extension = object_path.split(".")[-1].lower()
+    if file_extension is None:
+        raise ValueError(f"Unsupported file type: {object_path}")
+    
+    if file_extension == "usdz":
+        # install usdz io package
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        usdz_package = os.path.join(dirname, "io_scene_usdz.zip")
+        bpy.ops.preferences.addon_install(filepath=usdz_package)
+        
+        # enable it
+        addon_name = "io_scene_usdz"
+        bpy.ops.preferences.addon_enable(module=addon_name)
+        
+        # import the usdz
+        from io_scene_usdz.import_usdz import import_usdz
+        import_usdz(bpy.context, filepath=object_path, materials=True, animations=True)
+    else:
+        # load from existing import functions
+        import_function = IMPORT_FUNCTIONS[file_extension]
+        if file_extension == "blend":
+            import_function(directory=object_path, link=False)
+        elif file_extension in {"glb", "gltf"}:
+            import_function(filepath=object_path, merge_vertices=True)
+        else:
+            import_function(filepath=object_path)
+    
+    # Identify newly imported objects
+    new_objects = set(bpy.data.objects) - initial_objects
+    
+    if new_objects:
+        # Ensure we're in object mode
+        if bpy.context.active_object and bpy.context.active_object.mode != 'OBJECT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+        
+        # Deselect all objects
+        bpy.ops.object.select_all(action='DESELECT')
+        
+        # Find a mesh object to be the main object (preferably the first mesh)
+        main_object = None
+        for obj in new_objects:
+            if obj.type == 'MESH':
+                main_object = obj
+                break
+        
+        # If no mesh found, use the first object
+        if not main_object and new_objects:
+            main_object = list(new_objects)[0]
+        
+        if main_object:
+            # Make the main object active
+            bpy.context.view_layer.objects.active = main_object
+            
+            # Select all new objects
+            for obj in new_objects:
+                obj.select_set(True)
+            
+            # Join all selected objects
+            bpy.ops.object.join()
+            
+            # Rename the resulting object to match the filename
+            base_name = os.path.basename(object_path).split('.')[0]
+            bpy.context.active_object.name = base_name
+            
+            return bpy.context.active_object
+    
+    return None
 
 def scene_bbox(
     single_obj: Optional[bpy.types.Object] = None, ignore_matrix: bool = False
@@ -687,6 +774,116 @@ def apply_single_random_color_to_all_objects() -> Tuple[float, float, float, flo
             _apply_color_to_object(obj, rand_color)
     return rand_color
 
+# def generate_morandi_color(light=True):
+#     """Generate a random light or dark Morandi-style color (muted, desaturated)."""
+#     base = 0.7 if light else 0.3
+#     r = base + random.uniform(-0.1, 0.1)
+#     g = base + random.uniform(-0.1, 0.1)
+#     b = base + random.uniform(-0.1, 0.1)
+#     # Clamp between 0 and 1
+#     return (min(max(r, 0), 1), min(max(g, 0), 1), min(max(b, 0), 1), 1.0)
+
+def generate_morandi_color(light=True, saturation_factor=0.3, value_factor=0.8):
+    """Generate a random light or dark Morandi-style color (muted, desaturated) using HSV."""
+    h = random.random()  # Random hue
+    s = random.random() * saturation_factor # Reduced saturation
+    v = (0.8 if light else 0.3) + random.random() * (1 - (0.8 if light else 0.3)) * value_factor # Adjusted value
+
+    r, g, b = colorsys.hsv_to_rgb(h, s, v)
+    return (r, g, b, 1.0)  # Alpha is 1.0
+
+def create_material(name, color):
+    mat = bpy.data.materials.new(name=name)
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    if bsdf:
+        bsdf.inputs["Base Color"].default_value = color
+        bsdf.inputs["Roughness"].default_value = 0.9
+    return mat
+
+# def add_wall_background():
+#     """Add a wall-floor setup with 3 planes for indirect lighting and Morandi colors."""
+
+#     # Generate Morandi colors
+#     wall_color = generate_morandi_color(light=random.choice([True, False]))
+#     floor_color = generate_morandi_color(light=random.choice([True, False]))
+
+#     # Create materials
+#     wall_mat = create_material("WallMaterial", wall_color)
+#     floor_mat = create_material("FloorMaterial", floor_color)
+
+#     # Floor
+#     bpy.ops.mesh.primitive_plane_add(size=4, location=(0, 0, -0.5))
+#     floor = bpy.context.active_object
+#     floor.name = "Floor"
+#     floor.data.materials.append(floor_mat)
+
+#     # Back wall
+#     bpy.ops.mesh.primitive_plane_add(size=4, location=(0, -2, 1.5))
+#     back_wall = bpy.context.active_object
+#     back_wall.name = "BackWall"
+#     back_wall.rotation_euler[0] = math.radians(90)
+#     back_wall.data.materials.append(wall_mat)
+
+#     # Side wall
+#     bpy.ops.mesh.primitive_plane_add(size=4, location=(-2, 0, 1.5))
+#     side_wall = bpy.context.active_object
+#     side_wall.name = "SideWall"
+#     side_wall.rotation_euler[1] = math.radians(90)
+#     side_wall.data.materials.append(wall_mat)
+
+def add_wall_background():
+    """Add a box of walls with edges of 5 units, but only the floor at -0.5."""
+    
+    # Generate Morandi colors
+    wall_color = generate_morandi_color(light=random.choice([True, False]))
+    floor_color = generate_morandi_color(light=random.choice([True, False]))
+    
+    # Create materials
+    wall_mat = create_material("WallMaterial", wall_color)
+    floor_mat = create_material("FloorMaterial", floor_color)
+    
+    # Floor (at z=-0.5)
+    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, 0, -0.5))
+    floor = bpy.context.active_object
+    floor.name = "Floor"
+    floor.data.materials.append(floor_mat)
+    
+    # Back wall
+    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, -2.5, 2))
+    back_wall = bpy.context.active_object
+    back_wall.name = "BackWall"
+    back_wall.rotation_euler[0] = math.radians(90)
+    back_wall.data.materials.append(wall_mat)
+    
+    # Side wall (left)
+    bpy.ops.mesh.primitive_plane_add(size=5, location=(-2.5, 0, 2))
+    side_wall_left = bpy.context.active_object
+    side_wall_left.name = "SideWallLeft"
+    side_wall_left.rotation_euler[1] = math.radians(90)
+    side_wall_left.data.materials.append(wall_mat)
+    
+    # Side wall (right)
+    bpy.ops.mesh.primitive_plane_add(size=5, location=(2.5, 0, 2))
+    side_wall_right = bpy.context.active_object
+    side_wall_right.name = "SideWallRight"
+    side_wall_right.rotation_euler[1] = math.radians(90)
+    side_wall_right.data.materials.append(wall_mat)
+    
+    # Back wall (far)
+    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, 2.5, 2))
+    back_wall_far = bpy.context.active_object
+    back_wall_far.name = "BackWallFar"
+    back_wall_far.rotation_euler[0] = math.radians(90)
+    back_wall_far.data.materials.append(wall_mat)
+    
+    # Ceiling
+    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, 0, 4.5))
+    ceiling = bpy.context.active_object
+    ceiling.name = "Ceiling"
+    ceiling.rotation_euler[0] = math.radians(180)
+    ceiling.data.materials.append(wall_mat)
+
 
 class MetadataExtractor:
     """Class to extract metadata from a Blender scene."""
@@ -878,6 +1075,13 @@ def render_object(
         reset_scene()
         load_object(object_file)
 
+    context = bpy.context
+    obj = bpy.context.selected_objects[0]
+    
+    context.view_layer.objects.active = obj
+    context.view_layer.use_pass_z = True  # This enables the Z/Depth pass
+    obj.pass_index = 1  # Assign your desired pass index
+
     # Set up cameras
     cam = scene.objects["Camera"]
     cam.data.lens = 35
@@ -920,8 +1124,93 @@ def render_object(
     with open(metadata_path, "w", encoding="utf-8") as f:
         json.dump(metadata, f, sort_keys=True, indent=2)
 
+    nodes = bpy.context.scene.node_tree.nodes
+    links = bpy.context.scene.node_tree.links
+
+    # Create input render layer node
+    render_layers = nodes.new('CompositorNodeRLayers')
+
+    # Create depth output nodes
+    depth_file_output = nodes.new(type="CompositorNodeOutputFile")
+    depth_file_output.label = 'Depth Output'
+    depth_file_output.base_path = output_dir
+    depth_file_output.file_slots[0].use_node_format = True
+    depth_file_output.format.file_format = "PNG"
+    depth_file_output.format.color_depth ='8'
+    depth_file_output.format.color_mode = "BW"
+
+    # Remap as other types can not represent the full range of depth.
+    nomalize = nodes.new(type="CompositorNodeNormalize")
+#    # Size is chosen kind of arbitrarily, try out until you're satisfied with resulting depth map.
+#    map.offset = [-0.7]
+#    map.size = [1.4]
+#    map.use_min = True
+#    map.min = [0]
+
+    links.new(render_layers.outputs['Depth'], nomalize.inputs[0])
+    links.new(nomalize.outputs[0], depth_file_output.inputs[0])
+#    links.new(render_layers.outputs['Depth'], depth_file_output.inputs[0])
+
+    # Create normal output nodes
+    scale_node = nodes.new(type="CompositorNodeMixRGB")
+    scale_node.blend_type = 'MULTIPLY'
+    # scale_node.use_alpha = True
+    scale_node.inputs[2].default_value = (0.5, 0.5, 0.5, 1)
+    links.new(render_layers.outputs['Normal'], scale_node.inputs[1])
+
+    bias_node = nodes.new(type="CompositorNodeMixRGB")
+    bias_node.blend_type = 'ADD'
+    # bias_node.use_alpha = True
+    bias_node.inputs[2].default_value = (0.5, 0.5, 0.5, 0)
+    links.new(scale_node.outputs[0], bias_node.inputs[1])
+
+    normal_file_output = nodes.new(type="CompositorNodeOutputFile")
+    normal_file_output.label = 'Normal Output'
+    normal_file_output.base_path = output_dir
+    normal_file_output.file_slots[0].use_node_format = True
+    normal_file_output.format.file_format = "PNG"
+    links.new(bias_node.outputs[0], normal_file_output.inputs[0])
+
+    # Create albedo output nodes
+    alpha_albedo = nodes.new(type="CompositorNodeSetAlpha")
+    links.new(render_layers.outputs['DiffCol'], alpha_albedo.inputs['Image'])
+    links.new(render_layers.outputs['Alpha'], alpha_albedo.inputs['Alpha'])
+
+    albedo_file_output = nodes.new(type="CompositorNodeOutputFile")
+    albedo_file_output.label = 'Albedo Output'
+    albedo_file_output.base_path = output_dir
+    albedo_file_output.file_slots[0].use_node_format = True
+    albedo_file_output.format.file_format = "PNG"
+    albedo_file_output.format.color_mode = 'RGBA'
+    albedo_file_output.format.color_depth ='8'
+    links.new(alpha_albedo.outputs['Image'], albedo_file_output.inputs[0])
+
+    # Create mask map output nodes
+    mask_file_output = nodes.new(type="CompositorNodeOutputFile")
+    mask_file_output.label = 'ID Output'
+    mask_file_output.base_path = output_dir
+    mask_file_output.file_slots[0].use_node_format = True
+    mask_file_output.format.file_format = "PNG"
+    mask_file_output.format.color_depth ='8'
+    mask_file_output.format.color_mode = 'BW'
+
+    # divide_node = nodes.new(type='CompositorNodeMath')
+    # divide_node.operation = 'DIVIDE'
+    # divide_node.use_clamp = False
+    # divide_node.inputs[1].default_value = 2**int(8)
+
+    id_mask_node = nodes.new(type='CompositorNodeIDMask')
+    id_mask_node.index = 1  
+    # idmask_node.inputs[1].default_value = 2**int(8)
+    id_mask_node.use_antialiasing = True
+
+    # links.new(render_layers.outputs['IndexOB'], id_mask_node.inputs[0])
+    links.new(render_layers.outputs['IndexOB'], id_mask_node.inputs['ID value'])
+    links.new(id_mask_node.outputs['Alpha'], mask_file_output.inputs[0])
+
     # normalize the scene
     normalize_scene()
+    add_wall_background()
 
     # # randomize the lighting
     # randomize_lighting()
@@ -932,31 +1221,94 @@ def render_object(
     # Read the file into a pandas DataFrame
     df = pd.read_csv(filename, sep='\t')
 
+    # Choose ONE random lighting setup
+    row = df.sample(1).iloc[0]
+    light_type = row['light_type']
+    color = ast.literal_eval(row['color'])
+    rotation = ast.literal_eval(row['rotation'])
 
+    # Set the lighting once
+    randomize_lighting_pd(light_type, color, rotation)
 
+    radius = 2.0
+    center = Vector((0.0, 0.0, 0.0))  # Assuming object is centered
+    
+    stepsize =  1/2 * math.pi / num_renders #args.views
+    rotation_mode = 'XYZ'
+    
     # render the images
     for i in range(num_renders):
-        for index, row in df.iterrows():
-            light_type = row['light_type']
-            color = ast.literal_eval(row['color'])
-            rotation = ast.literal_eval(row['rotation'])
-            # randomize the lighting
-            randomize_lighting_pd(light_type, color, rotation)
+        # for index, row in df.iterrows():
+        # light_type = row['light_type']
+        # color = ast.literal_eval(row['color'])
+        # rotation = ast.literal_eval(row['rotation'])
 
-            # set camera
-            camera = randomize_camera(
-                only_northern_hemisphere=only_northern_hemisphere,
-            )
+        # # randomize the lighting
+        # randomize_lighting_pd(light_type, color, rotation)
 
-            # render the image
-            render_path = os.path.join(output_dir, f"{i:03d}.png")
-            scene.render.filepath = render_path
-            bpy.ops.render.render(write_still=True)
+        # # set camera
+        # camera = randomize_camera(
+        #     only_northern_hemisphere=only_northern_hemisphere,
+        # )
+            
+        # angle = 1/2 * math.pi * i / num_renders
+        angle = stepsize * i
+        cam_x = radius * math.cos(angle)
+        cam_y = radius * math.sin(angle)
+        cam_z = 1.0  # Slight elevation
 
-            # save camera RT matrix
-            rt_matrix = get_3x4_RT_matrix_from_blender(camera)
-            rt_matrix_path = os.path.join(output_dir, f"{i:03d}.npy")
-            np.save(rt_matrix_path, rt_matrix)
+        cam.location = Vector((cam_x, cam_y, cam_z))
+
+        # Point the camera at the center
+        direction = (center - cam.location).normalized()
+        rot_quat = direction.to_track_quat("-Z", "Y")
+        cam.rotation_euler = rot_quat.to_euler()
+
+        # # Render frame
+        # render_path = os.path.join(output_dir, f"{i:03d}.png")
+        # scene.render.filepath = render_path
+        # bpy.ops.render.render(write_still=True)
+
+
+        # # Save camera RT matrix
+        # rt_matrix = get_3x4_RT_matrix_from_blender(cam)
+        # rt_matrix_path = os.path.join(output_dir, f"{i:03d}.npy")
+        # np.save(rt_matrix_path, rt_matrix)
+
+        # Render frame (RGB)
+        render_path = os.path.join(output_dir, '{0:03d}'.format(int(i)))
+
+        scene.render.filepath = render_path
+
+        # tmp_base_name = f"tmp_{i:03d}"
+
+        depth_file_output.file_slots[0].path = render_path + "_depth"
+        normal_file_output.file_slots[0].path = render_path + "_normal"
+        albedo_file_output.file_slots[0].path = render_path + "_albedo"
+        mask_file_output.file_slots[0].path = render_path + "_mask"
+
+        # # Temporary file paths for compositor nodes (Blender auto-adds frame number)
+        # depth_file_output.file_slots[0].path = tmp_base_name + "_depth"
+        # normal_file_output.file_slots[0].path = tmp_base_name + "_normal"
+        # albedo_file_output.file_slots[0].path = tmp_base_name + "_albedo"
+        # mask_file_output.file_slots[0].path = tmp_base_name + "_mask"
+
+        print(render_path + "_depth")
+        print(render_path + "_mask")
+
+        bpy.ops.render.render(write_still=True)  # render still
+
+        # # Rename temporary outputs to final filenames without frame numbers
+        # for suffix in ["_depth", "_normal", "_albedo", "_mask"]:
+        #     src = os.path.join(output_dir, f"{tmp_base_name}{suffix}0001.png")
+        #     dst = os.path.join(output_dir, f"{i:03d}{suffix}.png")
+        #     if os.path.exists(src):
+        #         shutil.move(src, dst)
+
+        # Save camera RT matrix
+        rt_matrix = get_3x4_RT_matrix_from_blender(cam)
+        rt_matrix_path = os.path.join(output_dir, f"{i:03d}.npy")
+        np.save(rt_matrix_path, rt_matrix)
 
 
 if __name__ == "__main__":
@@ -1002,13 +1354,19 @@ if __name__ == "__main__":
     render.engine = args.engine
     render.image_settings.file_format = "PNG"
     render.image_settings.color_mode = "RGBA"
+    render.image_settings.color_depth ='8' # ('8', '16')
     render.resolution_x = 512
     render.resolution_y = 512
     render.resolution_percentage = 100
 
+    scene.use_nodes = True
+    scene.view_layers["ViewLayer"].use_pass_normal = True
+    scene.view_layers["ViewLayer"].use_pass_diffuse_color = True
+    scene.view_layers["ViewLayer"].use_pass_object_index = True
+
     # Set cycles settings
     scene.cycles.device = "GPU"
-    scene.cycles.samples = 128
+    scene.cycles.samples = 64 #128
     scene.cycles.diffuse_bounces = 1
     scene.cycles.glossy_bounces = 1
     scene.cycles.transparent_max_bounces = 3

@@ -15,3 +15,16 @@ Run: 00:00:06seconds
 Run: 00:00:06seconds
 Run: 00:00:06seconds
 Run: 00:03:05seconds
+Run: 00:00:00seconds
+Run: 00:07:38seconds
+Run: 00:08:40seconds
+Run: 00:08:46seconds
+Run: 00:05:12seconds
+Run: 00:05:25seconds
+Run: 00:08:05seconds
+Run: 00:00:02seconds
+Run: 00:00:02seconds
+Run: 00:07:02seconds
+Run: 00:07:02seconds
+Run: 00:07:58seconds
+Run: 00:07:58seconds

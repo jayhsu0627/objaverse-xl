@@ -61,6 +61,30 @@ def zipdir(path: str, ziph: zipfile.ZipFile) -> None:
             arcname = os.path.join(os.path.basename(root), file)
             ziph.write(os.path.join(root, file), arcname=arcname)
 
+def get_and_rename_files(directory_path):
+    # Get all files in the directory that end with '0001.png'
+    all_files = []
+    for root, dirs, files in os.walk(directory_path):
+        for file in files:
+            if file.endswith('0001.png'):
+                all_files.append(os.path.join(root, file))
+    
+    # Rename each file
+    renamed_count = 0
+    for file_path in all_files:
+        # Create the new file name by replacing '0001.png' with '.png'
+        new_file_path = file_path.replace('0001.png', '.png')
+        
+        # Rename the file
+        try:
+            os.rename(file_path, new_file_path)
+            renamed_count += 1
+            # print(f"Renamed: {file_path} -> {new_file_path}")
+        except Exception as e:
+            print(f"Error renaming {file_path}: {e}")
+    
+    print(f"\nTotal files renamed: {renamed_count}")
+    return renamed_count
 
 def handle_found_object(
     local_path: str,
@@ -158,33 +182,37 @@ def handle_found_object(
         if using_gpu:
             command = f"export DISPLAY=:0.{gpu_i} && {command}"
         
-        # render the object (put in dev null)
-        subprocess.run(
-            ["bash", "-c", command],
-            timeout=render_timeout,
-            check=False,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-
-        # result = subprocess.run(
+        # # render the object (put in dev null)
+        # subprocess.run(
         #     ["bash", "-c", command],
         #     timeout=render_timeout,
-        #     capture_output=True,
-        #     text=True
+        #     check=False,
+        #     stdout=subprocess.DEVNULL,
+        #     stderr=subprocess.DEVNULL,
         # )
 
-        # # Save GPU usage info from stdout
-        # logger.info(f"[{file_identifier}] Blender stdout:\n{result.stdout}")
+        result = subprocess.run(
+            ["bash", "-c", command],
+            timeout=render_timeout,
+            capture_output=True,
+            text=True
+        )
 
-        # if result.returncode != 0:
-        #     logger.error(f"[{file_identifier}] Blender render failed:\n{result.stderr}")
+        # Save GPU usage info from stdout
+        logger.info(f"[{file_identifier}] Blender stdout:\n{result.stdout}")
+
+        if result.returncode != 0:
+            logger.error(f"[{file_identifier}] Blender render failed:\n{result.stderr}")
 
 
         # check that the renders were saved successfully
+        # [os.rename(f, f.replace('0001.png', '.png')) for f in glob.glob(os.path.join(target_directory, "*.png"))]
+        get_and_rename_files(target_directory)
+
         png_files = glob.glob(os.path.join(target_directory, "*.png"))
         metadata_files = glob.glob(os.path.join(target_directory, "*.json"))
         npy_files = glob.glob(os.path.join(target_directory, "*.npy"))
+        
         if (
             (len(png_files) != num_renders)
             or (len(npy_files) != num_renders)
@@ -370,7 +398,7 @@ def render_objects(
     # render_dir: str = "~/.objaverse",
     render_dir: str = "/fs/nexus-scratch/sjxu/.objaverse",
     download_dir: Optional[str] = None,
-    num_renders: int = 1,
+    num_renders: int = 16,
     processes: Optional[int] = None,
     save_repo_format: Optional[Literal["zip", "tar", "tar.gz", "files"]] = None,
     only_northern_hemisphere: bool = False,
