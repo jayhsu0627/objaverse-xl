@@ -335,40 +335,40 @@ def randomize_lighting_pd(light_type, color, rotation) -> Dict[str, bpy.types.Ob
     key_light = _create_light(
         name="Key_Light",
         light_type= light_type,
-        location=(0, 0, 1),
+        location=(0, 0, 9),
         color = color,
         rotation= rotation,
-        energy=random.choice([3, 4, 5]),
+        energy=random.choice([600, 800, 1000]),
     )
 
     # Create fill light
     fill_light = _create_light(
         name="Fill_Light",
         light_type= light_type,
-        location=(0, 0, 1),
+        location=(0, 0, 9),
         color = color,
         rotation=rotation,
-        energy=random.choice([2, 3, 4]),
+        energy=random.choice([400, 600, 800]),
     )
 
     # Create rim light
     rim_light = _create_light(
         name="Rim_Light",
         light_type="SUN",
-        location=(0, 0, 1),
+        location=(0, 0, 9),
         color = color,
         rotation= rotation,
-        energy=random.choice([3, 4, 5]),
+        energy=random.choice([600, 800, 1000]),
     )
 
     # Create bottom light
     bottom_light = _create_light(
         name="Bottom_Light",
         light_type= light_type,
-        location=(0, 0, 1),
+        location=(0, 0, 9),
         color = color,
         rotation= rotation,
-        energy=random.choice([1, 2, 3]),
+        energy=random.choice([200, 400, 600]),
     )
 
     return dict(
@@ -774,14 +774,6 @@ def apply_single_random_color_to_all_objects() -> Tuple[float, float, float, flo
             _apply_color_to_object(obj, rand_color)
     return rand_color
 
-# def generate_morandi_color(light=True):
-#     """Generate a random light or dark Morandi-style color (muted, desaturated)."""
-#     base = 0.7 if light else 0.3
-#     r = base + random.uniform(-0.1, 0.1)
-#     g = base + random.uniform(-0.1, 0.1)
-#     b = base + random.uniform(-0.1, 0.1)
-#     # Clamp between 0 and 1
-#     return (min(max(r, 0), 1), min(max(g, 0), 1), min(max(b, 0), 1), 1.0)
 
 def generate_morandi_color(light=True, saturation_factor=0.3, value_factor=0.8):
     """Generate a random light or dark Morandi-style color (muted, desaturated) using HSV."""
@@ -801,37 +793,6 @@ def create_material(name, color):
         bsdf.inputs["Roughness"].default_value = 0.9
     return mat
 
-# def add_wall_background():
-#     """Add a wall-floor setup with 3 planes for indirect lighting and Morandi colors."""
-
-#     # Generate Morandi colors
-#     wall_color = generate_morandi_color(light=random.choice([True, False]))
-#     floor_color = generate_morandi_color(light=random.choice([True, False]))
-
-#     # Create materials
-#     wall_mat = create_material("WallMaterial", wall_color)
-#     floor_mat = create_material("FloorMaterial", floor_color)
-
-#     # Floor
-#     bpy.ops.mesh.primitive_plane_add(size=4, location=(0, 0, -0.5))
-#     floor = bpy.context.active_object
-#     floor.name = "Floor"
-#     floor.data.materials.append(floor_mat)
-
-#     # Back wall
-#     bpy.ops.mesh.primitive_plane_add(size=4, location=(0, -2, 1.5))
-#     back_wall = bpy.context.active_object
-#     back_wall.name = "BackWall"
-#     back_wall.rotation_euler[0] = math.radians(90)
-#     back_wall.data.materials.append(wall_mat)
-
-#     # Side wall
-#     bpy.ops.mesh.primitive_plane_add(size=4, location=(-2, 0, 1.5))
-#     side_wall = bpy.context.active_object
-#     side_wall.name = "SideWall"
-#     side_wall.rotation_euler[1] = math.radians(90)
-#     side_wall.data.materials.append(wall_mat)
-
 def add_wall_background():
     """Add a box of walls with edges of 5 units, but only the floor at -0.5."""
     
@@ -844,41 +805,41 @@ def add_wall_background():
     floor_mat = create_material("FloorMaterial", floor_color)
     
     # Floor (at z=-0.5)
-    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, 0, -0.5))
+    bpy.ops.mesh.primitive_plane_add(size=10, location=(0, 0, -0.5))
     floor = bpy.context.active_object
     floor.name = "Floor"
     floor.data.materials.append(floor_mat)
     
     # Back wall
-    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, -2.5, 2))
+    bpy.ops.mesh.primitive_plane_add(size=10, location=(0, -5, 4.5))
     back_wall = bpy.context.active_object
     back_wall.name = "BackWall"
     back_wall.rotation_euler[0] = math.radians(90)
     back_wall.data.materials.append(wall_mat)
     
     # Side wall (left)
-    bpy.ops.mesh.primitive_plane_add(size=5, location=(-2.5, 0, 2))
+    bpy.ops.mesh.primitive_plane_add(size=10, location=(-5, 0, 4.5))
     side_wall_left = bpy.context.active_object
     side_wall_left.name = "SideWallLeft"
     side_wall_left.rotation_euler[1] = math.radians(90)
     side_wall_left.data.materials.append(wall_mat)
     
     # Side wall (right)
-    bpy.ops.mesh.primitive_plane_add(size=5, location=(2.5, 0, 2))
+    bpy.ops.mesh.primitive_plane_add(size=10, location=(5, 0, 4.5))
     side_wall_right = bpy.context.active_object
     side_wall_right.name = "SideWallRight"
     side_wall_right.rotation_euler[1] = math.radians(90)
     side_wall_right.data.materials.append(wall_mat)
     
     # Back wall (far)
-    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, 2.5, 2))
+    bpy.ops.mesh.primitive_plane_add(size=10, location=(0, 5, 4.5))
     back_wall_far = bpy.context.active_object
     back_wall_far.name = "BackWallFar"
     back_wall_far.rotation_euler[0] = math.radians(90)
     back_wall_far.data.materials.append(wall_mat)
     
     # Ceiling
-    bpy.ops.mesh.primitive_plane_add(size=5, location=(0, 0, 4.5))
+    bpy.ops.mesh.primitive_plane_add(size=10, location=(0, 0, 9.5))
     ceiling = bpy.context.active_object
     ceiling.name = "Ceiling"
     ceiling.rotation_euler[0] = math.radians(180)
@@ -1230,7 +1191,7 @@ def render_object(
     # Set the lighting once
     randomize_lighting_pd(light_type, color, rotation)
 
-    radius = 2.0
+    radius = 4.0
     center = Vector((0.0, 0.0, 0.0))  # Assuming object is centered
     
     stepsize =  1/2 * math.pi / num_renders #args.views

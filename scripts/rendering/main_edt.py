@@ -83,7 +83,7 @@ def get_and_rename_files(directory_path):
         except Exception as e:
             print(f"Error renaming {file_path}: {e}")
     
-    print(f"\nTotal files renamed: {renamed_count}")
+    # print(f"\nTotal files renamed: {renamed_count}")
     return renamed_count
 
 def handle_found_object(
@@ -320,7 +320,7 @@ def handle_modified_object(
             when it was downloaded with Objaverse-XL.
         metadata (Dict[str, Any]): Metadata about the 3D object, such as the GitHub
             organization and repo names.
-        num_renders (int): Number of renders to save of the object.
+        num_renders (int): Number of renders to save of the object.get_example_objects
         render_dir (str): Directory where the objects will be rendered.
         only_northern_hemisphere (bool): Only render the northern hemisphere of the
             object.
@@ -458,6 +458,12 @@ def render_objects(
 
     # get the objects to render
     objects = get_example_objects()
+
+    # annotations = oxl.get_annotations(
+    #     download_dir="~/.objaverse" # default download directory
+    # ) 
+    # objects = annotations.sample(5)
+
     objects.iloc[0]["fileIdentifier"]
     objects = objects.copy()
     logger.info(f"Provided {len(objects)} objects to render.")
