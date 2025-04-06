@@ -19,6 +19,8 @@ from loguru import logger
 
 import objaverse.xl as oxl
 from objaverse.utils import get_uid_from_str
+from objaverse import load_uids, load_objects, load_lvis_annotations  # same helper you already call
+from objaverse.xl import download_objects, SketchfabDownloader   # you already vendor this
 
 import time
 import datetime
@@ -479,14 +481,49 @@ def render_objects(
     saved_ids = set(zip_file.split("/")[-1].split(".")[0] for zip_file in zip_files)
     logger.info(f"Found {len(saved_ids)} objects already rendered.")
 
-    # filter out the already rendered objects
-    objects["saveUid"] = objects["fileIdentifier"].apply(get_uid_from_str)
-    objects = objects[~objects["saveUid"].isin(saved_ids)]
-    objects = objects.reset_index(drop=True)
-    logger.info(f"Rendering {len(objects)} new objects.")
+    # # filter out the already rendered objects
+    # objects["saveUid"] = objects["fileIdentifier"].apply(get_uid_from_str)
+    # objects = objects[~objects["saveUid"].isin(saved_ids)]
+    # objects = objects.reset_index(drop=True)
+    # logger.info(f"Rendering {len(objects)} new objects.")
 
-    # shuffle the objects
-    objects = objects.sample(frac=1).reset_index(drop=True)
+    # # shuffle the objects
+    # objects = objects.sample(frac=1).reset_index(drop=True)
+
+    # Load LVIS Annotations (objaverse-xl)
+    sketchfab = SketchfabDownloader()
+    lvis = sketchfab.get_annotations()                     # {category: [uid, uid, …]}
+    lvis['uid'] = lvis['fileIdentifier'].str.split('/').str[-1]  # Takes the last part of the URL
+
+    # Load LVIS json (objaverse 1.0)
+    lvis_json = load_lvis_annotations()
+    categories = list(lvis_json.keys())
+
+    # Choose how much objects to pick
+
+    k = random.randint(5, 10)
+    # 1️⃣  Choose categories first (no repeats until we run out of categories)
+    if k <= len(categories):
+        chosen_cats = random.sample(categories, k)     # all unique
+    else:
+        # Need more objects than categories → allow repeats after exhaustion
+        chosen_cats = random.sample(categories, len(categories))
+        chosen_cats += [random.choice(categories) for _ in range(k - len(categories))]
+
+    # 2️⃣  Pick one random UID from each chosen category
+    chosen_uids = [random.choice(lvis_json[cat]) for cat in chosen_cats]
+
+    print(f"🎲  Selected {k} objects from {len(set(chosen_cats))} categories")
+    for cat, uid in zip(chosen_cats, chosen_uids):
+        print(f"  • {cat:>20s}  →  {uid}")
+
+    # Filter the annotation according choosen uid
+    uid_set = set(chosen_uids)  # Convert to set for O(1) lookups
+    selected_lvis = lvis[lvis['uid'].map(lambda x: x in uid_set)]
+    # print(selected_lvis)
+
+    # print(selected_lvis.sample(3))
+    objects = selected_lvis.sample(3)
 
     oxl.download_objects(
         objects=objects,
