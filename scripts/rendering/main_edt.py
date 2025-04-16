@@ -9,7 +9,7 @@ import tempfile
 import time
 import zipfile
 from functools import partial
-from typing import Any, Callable, Dict, List, Literal, Optional, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, Tuple
 import shlex, math
 
 import fire
@@ -19,7 +19,8 @@ import pandas as pd
 from loguru import logger
 
 import objaverse.xl as oxl
-from objaverse.utils import get_uid_from_str
+import xl as mod_oxl
+from objaverse.utils import get_uid_from_str, get_file_hash
 from objaverse import load_uids, load_objects, load_lvis_annotations  # same helper you already call
 from objaverse.xl import download_objects, SketchfabDownloader   # you already vendor this
 from multiprocessing import Manager   # add to imports at top of file
@@ -346,10 +347,21 @@ def handle_found_object(
     #     return False  # Continue processing other objects
 
     # Add the freshly‑downloaded file to the shared basket
-    basket = local_path
+    if len(basket)< target_size.value:
+        basket.append(local_path)
+    else:
+        basket[:] = []  # Empty the list in-place
+    print(basket)
+
     # for (file,_,_,_) in basket:
     #     print(file, os.path.exists(file))
+    for path in basket:
+        if not os.path.isfile(path):
+            print(f"Missing or invalid file: {path}")
 
+    # print(basket, len(basket))
+
+    # print(len(basket), target_size.value, scene_counter.value >= max_scenes)
     # If we don't have enough objects yet, keep collecting
     if len(basket) < target_size.value:
         return False  # Tell download_objects we're not done, keep downloading
@@ -376,12 +388,20 @@ def handle_found_object(
         )
     except Exception as e:
         logger.error(f"Error processing batch: {e}")
-    
+
+    for path in basket:
+        if os.path.isfile(path):
+            os.remove(path)
+            print(f"Deleted: {path}")
+        else:
+            print(f"File not found: {path}")
+
     # Clear the basket and prepare for the next scene
-    basket[:] = []  # Empty the list in-place
     target_size.value = 5
-    scene_counter.value += 1
     
+    print('debugging here', scene_counter.value)
+    print(scene_counter.value >= max_scenes)
+
     # Return False to keep downloading more objects (unless we've hit max_scenes)
     return scene_counter.value >= max_scenes
 
@@ -402,9 +422,12 @@ def process_object_batch(
     This contains the main rendering logic separated from the collection logic.
     """
     print('==== CALLED ===')
+    scene_counter.value += 1
     # Extract paths for the Blender command
     paths = [item for item in basket]  # local_path is first item in each tuple
     quoted = " ".join(shlex.quote(p) for p in paths)
+    print("--object_paths", quoted)
+
     args = f"--object_paths {quoted} --num_renders {num_renders}"
 
     # Get GPU to use for rendering
@@ -424,6 +447,8 @@ def process_object_batch(
     
     # Run Blender once, importing all objects
     save_uid = f"scene_{scene_counter.value:04d}"
+    print('save_uid', save_uid)
+    
     with tempfile.TemporaryDirectory() as temp_dir:
         # Get the target directory for the rendering job
         target_directory = os.path.join(temp_dir, save_uid)
@@ -458,10 +483,9 @@ def process_object_batch(
             text=True
         )
 
-        # Activate for debugging Blender
-        
-        # Save GPU usage info from stdout
-        logger.info(f"[{save_uid}] Blender stdout:\n{result.stdout}")
+        # # Activate for debugging Blender
+        # # Save GPU usage info from stdout
+        # logger.info(f"[{save_uid}] Blender stdout:\n{result.stdout}")
 
         if result.returncode != 0:
             logger.error(f"[{save_uid}] Blender render failed:\n{result.stderr}")
@@ -475,9 +499,9 @@ def process_object_batch(
         npy_files = glob.glob(os.path.join(target_directory, "*.npy"))
         
         if (
-            (len(png_files) != num_renders)
+            (len(png_files) != num_renders * 6)
             or (len(npy_files) != num_renders)
-            or (len(metadata_files) != 1)
+            # or (len(metadata_files) != 1)
         ):
             logger.error(f"Scene {save_uid} was not rendered successfully!")
             # # Log failed objects
@@ -663,7 +687,7 @@ def render_objects(
     processes: Optional[int] = None,
     save_repo_format: Optional[Literal["zip", "tar", "tar.gz", "files"]] = None,
     only_northern_hemisphere: bool = False,
-    render_timeout: int = 300,
+    render_timeout: int = 1000,
     gpu_devices: Optional[Union[int, List[int]]] = None,
 ) -> None:
     """Renders objects in the Objaverse-XL dataset with Blender
@@ -708,7 +732,6 @@ def render_objects(
         logger.warning(
             f"GitHub repos will not save. While {download_dir=} is specified, {save_repo_format=} None."
         )
-
 
     # get the gpu devices to use
     parsed_gpu_devices: Union[int, List[int]] = 0
@@ -762,7 +785,7 @@ def render_objects(
 
     # Choose how much objects to pick
 
-    k = random.randint(5, 10)
+    k = random.randint(50, 100)
     # 1️⃣  Choose categories first (no repeats until we run out of categories)
     if k <= len(categories):
         chosen_cats = random.sample(categories, k)     # all unique
@@ -784,7 +807,7 @@ def render_objects(
     # print(selected_lvis)
 
     # print(selected_lvis.sample(3))
-    objects = selected_lvis.sample(5)
+    objects = selected_lvis.sample(30)
 
     # >>>>>>>>>>>>>>>>>>> NEW CONFIG <<<<<<<<<<<<<<<<<<<<<
     min_objs_per_scene = 2
@@ -798,74 +821,80 @@ def render_objects(
     basket        = manager.list()                         # holds paths
     target_size   = manager.Value('i', 5)
     scene_counter = manager.Value('i', 0)
+
     print(target_size, scene_counter, basket)
-    print(download_dir)
-    dl_report = oxl.download_objects(objects)
-    print(dl_report)
-    local_path = []
-    for value in dl_report.values():
-        local_path.append(value)
-    print('local_path: ', local_path)
+    download_dir = render_dir
 
-    handle_found_object(
-        local_path             = local_path,
-        file_identifier        = 'abc',
-        sha256                 = '123',
-        metadata               = None,
-        num_renders            = num_renders,
-        render_dir             = render_dir,
-        only_northern_hemisphere = only_northern_hemisphere,
-        gpu_devices            = parsed_gpu_devices,
-        render_timeout         = render_timeout,
-        # shared state
-        basket=basket,
-        target_size=target_size,
-        scene_counter=scene_counter,
-        max_scenes=max_scenes_to_render,
-        min_objs=min_objs_per_scene,
-        max_objs=max_objs_per_scene,
-        successful_log_file="handle-found-object-successful.csv",
-        failed_log_file="handle-found-object-failed.csv",
-    )
+    # print(download_dir)
+    # dl_report = oxl.download_objects(objects)
+    # # print(dl_report)
 
+    # local_path = []
+    # for value in dl_report.values():
+    #     local_path.append(value)
+    # print('local_path: ', local_path)
 
-    # oxl.download_objects(
-    # # download_objects(
-    #     objects=objects,
-    #     processes=processes,
-    #     save_repo_format=save_repo_format,
-    #     download_dir=download_dir,
-    #     handle_found_object=partial(
-    #         handle_found_object,
-    #         render_dir=render_dir,
-    #         num_renders=num_renders,
-    #         only_northern_hemisphere=only_northern_hemisphere,
-    #         gpu_devices=parsed_gpu_devices,
-    #         render_timeout=render_timeout,
-    #         # ---------- pass shared state ----------
-    #         basket=basket,
-    #         target_size=target_size,
-    #         scene_counter=scene_counter,
-    #         max_scenes=max_scenes_to_render,
-    #         min_objs=min_objs_per_scene,
-    #         max_objs=max_objs_per_scene,
-
-    #     ),
-    #     handle_new_object=handle_new_object,
-    #     handle_modified_object=partial(
-    #         handle_modified_object,
-    #         render_dir=render_dir,
-    #         num_renders=num_renders,
-    #         only_northern_hemisphere=only_northern_hemisphere,
-    #         gpu_devices=parsed_gpu_devices,
-    #         render_timeout=render_timeout,
-    #     ),
-    #     handle_missing_object=handle_missing_object,
+    # handle_found_object(
+    #     local_path             = local_path,
+    #     file_identifier        = 'abc',
+    #     sha256                 = '123',
+    #     metadata               = None,
+    #     num_renders            = num_renders,
+    #     render_dir             = render_dir,
+    #     only_northern_hemisphere = only_northern_hemisphere,
+    #     gpu_devices            = parsed_gpu_devices,
+    #     render_timeout         = render_timeout,
+    #     # shared state
+    #     basket=basket,
+    #     target_size=target_size,
+    #     scene_counter=scene_counter,
+    #     max_scenes=max_scenes_to_render,
+    #     min_objs=min_objs_per_scene,
+    #     max_objs=max_objs_per_scene,
+    #     successful_log_file="handle-found-object-successful.csv",
+    #     failed_log_file="handle-found-object-failed.csv",
     # )
 
 
+    # oxl.download_objects(
+    mod_oxl.download_objects(
+    # download_objects(
+        objects=objects,
+        # download_dir = "/fs/nexus-scratch/sjxu/.objaverse",
+        processes=processes,
+        save_repo_format=save_repo_format,
+        download_dir=download_dir,
+        handle_found_object=partial(
+            handle_found_object,
+            render_dir=render_dir,
+            num_renders=num_renders,
+            only_northern_hemisphere=only_northern_hemisphere,
+            gpu_devices=parsed_gpu_devices,
+            render_timeout=render_timeout,
+            # ---------- pass shared state ----------
+            basket=basket,
+            target_size=target_size,
+            scene_counter=scene_counter,
+            max_scenes=max_scenes_to_render,
+            min_objs=min_objs_per_scene,
+            max_objs=max_objs_per_scene,
+
+        ),
+        handle_new_object=handle_new_object,
+        handle_modified_object=partial(
+            handle_modified_object,
+            render_dir=render_dir,
+            num_renders=num_renders,
+            only_northern_hemisphere=only_northern_hemisphere,
+            gpu_devices=parsed_gpu_devices,
+            render_timeout=render_timeout,
+        ),
+        handle_missing_object=handle_missing_object,
+    )
+
+
 if __name__ == "__main__":
-    filename = "/fs/nexus-scratch/sjxu/objaverse-xl/scripts/rendering/loop_time_ee.txt"
+    filename = "/fs/nexus-scratch/sjxu/objaverse-xl/scripts/rendering/loop_time_cycle.txt"
     start_time = datetime.datetime.now()
     fire.Fire(render_objects)
     end_time = datetime.datetime.now()

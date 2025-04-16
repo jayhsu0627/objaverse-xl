@@ -1,3 +1,6 @@
 Run: 569.127645 seconds
 Run: 0.00 seconds
 Run: 0.00 seconds
+Run: 00:05:14seconds
+Run: 00:10:12seconds
+Run: 00:11:35seconds
