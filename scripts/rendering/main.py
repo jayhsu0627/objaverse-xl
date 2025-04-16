@@ -103,6 +103,7 @@ def handle_found_object(
     Returns: True if the object was rendered successfully, False otherwise.
     """
     save_uid = get_uid_from_str(file_identifier)
+    print(local_path)
     args = f"--object_path '{local_path}' --num_renders {num_renders}"
 
     # get the GPU to use for rendering
@@ -152,6 +153,7 @@ def handle_found_object(
         # https://yigityakupoglu.home.blog/
         if using_gpu:
             command = f"export DISPLAY=:0.{gpu_i} && {command}"
+        print(command)
 
         # render the object (put in dev null)
         subprocess.run(
@@ -434,6 +436,7 @@ def render_objects(
 
     # shuffle the objects
     objects = objects.sample(frac=1).reset_index(drop=True)
+    print(download_dir)
 
     oxl.download_objects(
         objects=objects,
@@ -478,7 +481,7 @@ if __name__ == "__main__":
     # Format as "hours:minutes:seconds"
     loop_time_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
 
-    # Write the loop time to the file
-    with open(filename, "a") as file:
-        file.write("Run: "+ loop_time_formatted +"seconds\n")
-    subprocess.run(["bash", "-c", "sudo python3 start_x_server.py stop"])
+    # # Write the loop time to the file
+    # with open(filename, "a") as file:
+    #     file.write("Run: "+ loop_time_formatted +"seconds\n")
+    # subprocess.run(["bash", "-c", "sudo python3 start_x_server.py stop"])
